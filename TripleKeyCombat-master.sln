@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{B8727A28-1FC5-E474-92D3-230E882E4D3B}") = "TripleKeyCombat-master", "Assembly-CSharp.csproj", "{46A3F579-40CE-DCA2-74D4-472515FB253D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46A3F579-40CE-DCA2-74D4-472515FB253D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A3F579-40CE-DCA2-74D4-472515FB253D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A3F579-40CE-DCA2-74D4-472515FB253D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A3F579-40CE-DCA2-74D4-472515FB253D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
