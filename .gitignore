@@ -1,3 +1,23 @@
+#UNITY
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+/[Ll]ibrary/
+sysinfo.txt
+*.stackdump
+
+[Ee]xported[Oo]bj/
+.vs/
+/*.userprefs
+/*.csproj
+/*.unityproj
+/*.booproj
+/*.suo
+/*.pidb
+/*.sln*
+/*.user
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
