@@ -26,18 +26,16 @@ public class SpawnController : MonoBehaviour {
 	void SpawnSpawnables(int type, int amt) {
 		int[] randomCoords = new int[3];
 		int amtSpawned = 0;
-		GameObject enemyObj; //need a handle to atleast 1 enemyObj
-
 		while (amtSpawned < amt) {
 			RandomizeCoords(randomCoords);
 			GameObject go = nineBlocks[randomCoords[0]].GetComponent<NineBlock>().GetChildBlockTransform(randomCoords[1], randomCoords[2]).gameObject;
 			Block block = go.GetComponent<Block>();
-			if(block.isEmpty) {
+			if (block.isEmpty) {
 				block.isEmpty = false;
 				amtSpawned++;
 				switch (type) {
 					case (int) spawnables.Enemies:
-						enemyObj = Instantiate(spawnableEnemies[0], block.transform.position, Quaternion.identity) as GameObject;
+						GameObject enemyObj = Instantiate(spawnableEnemies[0], block.transform.position, Quaternion.identity) as GameObject;
 						block.enemyObj = enemyObj;
 						enemyObj.transform.parent = gameObject.transform;
 						break;

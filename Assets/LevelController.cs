@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class LevelController : MonoBehaviour {
 
@@ -10,17 +11,36 @@ public class LevelController : MonoBehaviour {
 	public Text timerText;
 	public float maxTime;
 	public float remTime;
-	public bool timerOver = false;
 
+	public bool timerOver = true;
 	public bool stillPlaying = true;
 	public bool levelWon = false;
 
 	void Start () {
 		Camera.main.orthographicSize = 15;
+	}
+
+	public void InitLevel(int levelNum) {
+		Debug.Log("Initiating Level " + levelNum.ToString());
+		InitDifficulty(levelNum);
 		spawner = spawnerObj.GetComponent<SpawnController>();
 		spawner.Build(enemiesAmt, hazardsAmt);
 		spawner.SpawnAll();
 		remTime = maxTime;
+		Debug.Log("Done Initiating");
+		timerOver = false;
+	}
+
+	void InitDifficulty(int levelNum) {
+		enemiesAmt = Mathf.Min(levelNum, 15); //maximum of 15 enemies/level
+		hazardsAmt = levelNum * 3;
+		if((hazardsAmt + enemiesAmt) > 27) {
+			hazardsAmt -= (hazardsAmt + enemiesAmt - 27);
+		}
+
+		maxTime = Mathf.Max((float) (25 - (levelNum * 1.5)), 10);
+		Debug.Log("Difficulty set");
+
 	}
 
 	void Update () {
@@ -45,6 +65,11 @@ public class LevelController : MonoBehaviour {
 	void GameWin() {
 		timerOver = true;
 		stillPlaying = false;
+		StartCoroutine(InterLevelWait(3));
+	}
+
+	public IEnumerator InterLevelWait(float waitDur) {
+		yield return new WaitForSeconds(waitDur);
 		levelWon = true;
 	}
 
