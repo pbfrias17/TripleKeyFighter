@@ -3,38 +3,57 @@ using System.Collections;
 
 public class SpawnController : MonoBehaviour {
 
-
     public int enemiesToSpawn;
-    public Enemy[] spawnableEnemies;
-    public Hazard[] spawnableHazards;
+	public int hazardsToSpawn;
+    public GameObject[] spawnableEnemies;
+    public GameObject[] spawnableHazards;
     public NineBlock[] nineBlocks;
+	public enum spawnables { Enemies, Hazards }
 
 
-	// Use this for initialization
-	void Start () {
-        SpawnEnemies(enemiesToSpawn);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	public void Build(int enemies, int hazards) {
+		enemiesToSpawn = enemies;
+		hazardsToSpawn = hazards;
 	}
 
-    void SpawnEnemies(int amt) {
-        int[] coords = new int[3];
-        int spawnedEnemies = 0;
-        while(spawnedEnemies != amt) {
-            for (int i = 0; i < 3; i++)
-            {
-                coords[i] = Random.Range(0, 3);
-            }
-            NineBlock nb = nineBlocks[coords[0]].GetComponent<NineBlock>();
-            GameObject go = nb.GetChildBlockTransform(coords[1], coords[2]).gameObject;
-            Block block = go.GetComponent<Block>();
-            if(block.isEmpty) {
-                block.SpawnEnemy(spawnableEnemies[0]);
-                spawnedEnemies++;
-            }
-        }
-    }
+
+	public void SpawnAll() {
+		SpawnSpawnables((int)spawnables.Enemies, enemiesToSpawn);
+		SpawnSpawnables((int)spawnables.Hazards, hazardsToSpawn);
+	}
+
+
+	void SpawnSpawnables(int type, int amt) {
+		int[] randomCoords = new int[3];
+		int amtSpawned = 0;
+		GameObject enemyObj; //need a handle to atleast 1 enemyObj
+
+		while (amtSpawned < amt) {
+			RandomizeCoords(randomCoords);
+			GameObject go = nineBlocks[randomCoords[0]].GetComponent<NineBlock>().GetChildBlockTransform(randomCoords[1], randomCoords[2]).gameObject;
+			Block block = go.GetComponent<Block>();
+			if(block.isEmpty) {
+				block.isEmpty = false;
+				amtSpawned++;
+				switch (type) {
+					case (int) spawnables.Enemies:
+						enemyObj = Instantiate(spawnableEnemies[0], block.transform.position, Quaternion.identity) as GameObject;
+						block.enemyObj = enemyObj;
+						enemyObj.transform.parent = gameObject.transform;
+						break;
+					case (int) spawnables.Hazards:
+						GameObject hazardObj = Instantiate(spawnableHazards[0], block.transform.position, Quaternion.identity) as GameObject;
+						block.hazardObj = hazardObj;
+						hazardObj.transform.parent = gameObject.transform;
+						break;
+				}
+			}
+		}
+	}
+
+	void RandomizeCoords(int[] coords) {
+		for (int i = 0; i < coords.Length; i++) {
+			coords[i] = Random.Range(0, 3);
+		}
+	}
 }

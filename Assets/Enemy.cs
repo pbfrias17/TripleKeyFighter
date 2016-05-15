@@ -3,29 +3,42 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 
+	static public int amtAlive = 0;
     public int maxHP;
-    private int currHP;
+	public int currHP;
+	public bool alive = true;
     Animator anim;
+	public Vector3 spawnOffset;
 
 	// Use this for initialization
-	void Start () { 
+	void Start () {
+		amtAlive++; //keep track of alive enemies
+		transform.position += spawnOffset; 
         anim = gameObject.GetComponent<Animator>();
         currHP = maxHP;
-        Debug.Log(currHP);
     }
 
     public void TakeDamage(int dmg) {
-        Debug.Log("curr - dmg : " + currHP + " - " + dmg);
-        currHP -= dmg;
-        if(currHP < 0) Die();
-    }
+		currHP--;
+		//wait a split second for player animation
+		if (currHP <= 0)
+			StartCoroutine(DieWithDelay(.1f));
+	}
 
     void Die() {
-        if (!anim) Debug.Log("anim null");
         anim.SetTrigger("Death");
+		alive = false;
+		amtAlive--;
+		SendMessageUpwards("ReceiveDeathMessage", amtAlive);
     }
 
     public virtual void Attack() {
         //normal enemies don't attack
     }
+
+	public IEnumerator DieWithDelay(float dur) {
+		yield return new WaitForSeconds(dur);
+		Die();
+
+	}
 }

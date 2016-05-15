@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
 	public AudioClip[] phase3Audio;
 
     public int damageDealt;
-
+	public bool paralyzed;
 	// Use this for initialization
 	void Start () {
 		playerAnim = gameObject.GetComponent<Animator>();
@@ -31,11 +31,13 @@ public class PlayerController : MonoBehaviour {
 		playerAudio = gameObject.GetComponent<AudioSource>();
 		attackCommand = new int[attackCommandLen];
 		playerDepth = gameObject.transform.position.z;
+
+		paralyzed = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(playerAnim.GetCurrentAnimatorStateInfo(0).IsName("New State")) { //||
+		if(playerAnim.GetCurrentAnimatorStateInfo(0).IsName("New State") && !paralyzed) { //||
 			//(playerAnim.IsInTransition(0) && playerAnim.GetNextAnimatorStateInfo(0).IsName("New State"))) {
 			if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) ||
 				Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow)) {
@@ -110,17 +112,36 @@ public class PlayerController : MonoBehaviour {
 		gameObject.transform.position = target.position + new Vector3(-2.0f, 2.2f, playerDepth);
 
         Block block = target.gameObject.GetComponent<Block>();
-        if(block.enemy != null) {
-            playerAnim.SetTrigger("Attack" + (currAttackSet - 1).ToString());
-            playerAudio.clip = phase3Audio[Random.Range(0, 2)];
-            playerAudio.Play();
-            block.GetAttacked(damageDealt);
-        } else if(block.hazard != null) {
-            //get hurt
+        if(block.enemyObj != null && block.enemyObj.GetComponent<Enemy>().alive) {
+			PerformAttack();
+			Enemy e = block.enemyObj.GetComponent<Enemy>();
+			e.TakeDamage(damageDealt);
+        } else if(block.hazardObj != null) {
+			StartCoroutine(ParalyzeTime(3));
         } else {
-            playerAudio.clip = phase2Audio[Random.Range(0, 2)]; //went to a space without an enemy
-            playerAudio.Play();
+			LandOnEmpty();
         }
 	
+	}
+
+	void PerformAttack() {
+		//Time.timeScale = .1f;
+		playerAnim.SetTrigger("Attack" + (currAttackSet - 1).ToString());
+		playerAudio.clip = phase3Audio[Random.Range(0, 2)];
+		playerAudio.Play();
+	}
+
+	void LandOnEmpty() {
+		playerAudio.clip = phase2Audio[Random.Range(0, 2)]; //went to a space without an enemy
+		playerAudio.Play();
+	}
+
+	public IEnumerator ParalyzeTime(float dur) {
+		Color originalColor = playerSR.color;
+		playerSR.color = new Color(.1f, .1f, 1f, .9f);
+		paralyzed = true;
+		yield return new WaitForSeconds(dur);
+		playerSR.color = originalColor;
+		paralyzed = false;
 	}
 }
