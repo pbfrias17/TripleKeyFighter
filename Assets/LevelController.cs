@@ -55,6 +55,7 @@ public class LevelController : MonoBehaviour {
 			timerText.text = remTime.ToString("F2");
 		}
 
+		//GameOver when timer reaches 0
 		if(remTime <= 0 && !timerOver) {
 			GameOver();
 		}
@@ -62,7 +63,7 @@ public class LevelController : MonoBehaviour {
 
 	//message to be received from enemy deaths
 	public void ReceiveDeathMessage(int enemiesLeft) {
-		//update score
+		//update score after each kill
 		UpdateScore(remTime);
 
 		//check win condition
@@ -75,9 +76,10 @@ public class LevelController : MonoBehaviour {
 	void UpdateScore(float timeOfKill) {
 		float diff = timeOfLastKill - timeOfKill;
 		int nextScore = (int) (100 / diff) + 100; //kill = 100 base score
-		Debug.Log("level score: " + score.ToString() + " + " + nextScore.ToString());
+		Debug.Log("diff: " + diff.ToString() + " -> score: " + nextScore.ToString());
 		score += nextScore;
 		HUDObj.GetComponent<HUDController>().UpdateScore(score);
+		timeOfLastKill = timeOfKill;
 	}
 
 	//message to be received from player input
@@ -90,7 +92,6 @@ public class LevelController : MonoBehaviour {
 		timerOver = true;
 		stillPlaying = false;
 		HUDObj.GetComponent<HUDController>().ShowEndOfLevelSplash(true, 100);
-		Debug.Log("AT LEVEL END: score = " + score.ToString());
 		StartCoroutine(InterLevelWait(3));
 	}
 
