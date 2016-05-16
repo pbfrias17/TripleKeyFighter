@@ -15,6 +15,9 @@ public class LevelController : MonoBehaviour {
 	public bool timerOver = true;
 	public bool stillPlaying = true;
 	public bool levelWon = false;
+	public bool levelLost = false;
+
+	public GameObject HUDObj;
 
 	void Start () {
 		Camera.main.orthographicSize = 15;
@@ -32,7 +35,8 @@ public class LevelController : MonoBehaviour {
 	}
 
 	void InitDifficulty(int levelNum) {
-		enemiesAmt = Mathf.Min(levelNum, 15); //maximum of 15 enemies/level
+		enemiesAmt = Mathf.Max(levelNum, 3);
+		enemiesAmt = Mathf.Min(enemiesAmt, 15); // min/max of 3/15 enemies per level
 		hazardsAmt = levelNum * 3;
 		if((hazardsAmt + enemiesAmt) > 27) {
 			hazardsAmt -= (hazardsAmt + enemiesAmt - 27);
@@ -65,6 +69,7 @@ public class LevelController : MonoBehaviour {
 	void GameWin() {
 		timerOver = true;
 		stillPlaying = false;
+		HUDObj.GetComponent<HUDController>().ShowEndOfLevelSplash(true, 100);
 		StartCoroutine(InterLevelWait(3));
 	}
 
@@ -74,9 +79,11 @@ public class LevelController : MonoBehaviour {
 	}
 
 	void GameOver() {
+		Debug.Log("LC: Game Over");
 		stillPlaying = false;
 		timerOver = true;
-		levelWon = false;
+		levelLost = true;
 		timerText.text = "0.00";
+		HUDObj.GetComponent<HUDController>().ShowEndOfLevelSplash(false, 100);
 	}
 }

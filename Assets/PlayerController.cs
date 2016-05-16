@@ -19,10 +19,16 @@ public class PlayerController : MonoBehaviour {
 	public AudioClip[] phase1Audio;
 	public AudioClip[] phase2Audio;
 	public AudioClip[] phase3Audio;
+	public AudioClip[] hurtAudio;
 
     public int damageDealt;
 	public bool paralyzed;
+	public bool canTakeInput;
+	public float paralyzeDuration;
 	// Use this for initialization
+	void Awake() {
+		canTakeInput = true;
+	}
 	void Start () {
 		playerAnim = gameObject.GetComponent<Animator>();
 		playerSR = gameObject.GetComponent<SpriteRenderer>();
@@ -37,7 +43,7 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(playerAnim.GetCurrentAnimatorStateInfo(0).IsName("New State") && !paralyzed) { //||
+		if(playerAnim.GetCurrentAnimatorStateInfo(0).IsName("New State") && !paralyzed && canTakeInput) { //||
 			//(playerAnim.IsInTransition(0) && playerAnim.GetNextAnimatorStateInfo(0).IsName("New State"))) {
 			if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) ||
 				Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow)) {
@@ -117,7 +123,9 @@ public class PlayerController : MonoBehaviour {
 			Enemy e = block.enemyObj.GetComponent<Enemy>();
 			e.TakeDamage(damageDealt);
         } else if(block.hazardObj != null) {
-			StartCoroutine(ParalyzeTime(3));
+			playerAudio.clip = hurtAudio[Random.Range(0, hurtAudio.Length)];
+			playerAudio.Play();
+			StartCoroutine(ParalyzeTime(paralyzeDuration));
         } else {
 			LandOnEmpty();
         }

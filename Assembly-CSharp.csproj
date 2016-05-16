@@ -50,6 +50,7 @@
      <Compile Include="Assets\Enemy.cs" />
      <Compile Include="Assets\Entities\NineBlock\NineBlock.cs" />
      <Compile Include="Assets\GameController.cs" />
+     <Compile Include="Assets\HUDController.cs" />
      <Compile Include="Assets\Hazard.cs" />
      <Compile Include="Assets\LevelController.cs" />
      <Compile Include="Assets\PlayerController.cs" />
