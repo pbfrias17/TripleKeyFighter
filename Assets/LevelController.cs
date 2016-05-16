@@ -11,6 +11,7 @@ public class LevelController : MonoBehaviour {
 	public Text timerText;
 	public float maxTime;
 	public float remTime;
+	float timeOfLastKill;
 
 	public bool timerOver = true;
 	public bool stillPlaying = true;
@@ -18,6 +19,7 @@ public class LevelController : MonoBehaviour {
 	public bool levelLost = false;
 
 	public GameObject HUDObj;
+	public int score;
 
 	void Start () {
 		Camera.main.orthographicSize = 15;
@@ -30,7 +32,8 @@ public class LevelController : MonoBehaviour {
 		spawner.Build(enemiesAmt, hazardsAmt);
 		spawner.SpawnAll();
 		remTime = maxTime;
-		Debug.Log("Done Initiating");
+		timeOfLastKill = maxTime;
+		HUDObj.GetComponent<HUDController>().UpdateScore(score); //update score at start
 		timerOver = false;
 	}
 
@@ -43,7 +46,6 @@ public class LevelController : MonoBehaviour {
 		}
 
 		maxTime = Mathf.Max((float) (25 - (levelNum * 1.5)), 10);
-		Debug.Log("Difficulty set");
 
 	}
 
@@ -60,16 +62,35 @@ public class LevelController : MonoBehaviour {
 
 	//message to be received from enemy deaths
 	public void ReceiveDeathMessage(int enemiesLeft) {
-		Debug.Log("enemies left = " + enemiesLeft);
+		//update score
+		UpdateScore(remTime);
+
+		//check win condition
 		if(enemiesLeft == 0 && !timerOver) {
 			GameWin();
 		}
 	}
 
+	//score is influenced by player timing
+	void UpdateScore(float timeOfKill) {
+		float diff = timeOfLastKill - timeOfKill;
+		int nextScore = (int) (100 / diff) + 100; //kill = 100 base score
+		Debug.Log("level score: " + score.ToString() + " + " + nextScore.ToString());
+		score += nextScore;
+		HUDObj.GetComponent<HUDController>().UpdateScore(score);
+	}
+
+	//message to be received from player input
+	public void ReceivePlayerInput(int inputVal) {
+		HUDObj.GetComponent<HUDController>().AppendToInputCoords(inputVal);
+	}
+
+
 	void GameWin() {
 		timerOver = true;
 		stillPlaying = false;
 		HUDObj.GetComponent<HUDController>().ShowEndOfLevelSplash(true, 100);
+		Debug.Log("AT LEVEL END: score = " + score.ToString());
 		StartCoroutine(InterLevelWait(3));
 	}
 
@@ -79,7 +100,6 @@ public class LevelController : MonoBehaviour {
 	}
 
 	void GameOver() {
-		Debug.Log("LC: Game Over");
 		stillPlaying = false;
 		timerOver = true;
 		levelLost = true;

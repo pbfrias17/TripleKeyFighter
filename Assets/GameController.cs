@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour {
 	public bool stillPlaying;
 	public bool levelLoaded;
 
+	public int gameScore;
+
 
 	void Awake() {
 		levelLoaded = false;
@@ -26,20 +28,20 @@ public class GameController : MonoBehaviour {
 
 	void StartGame() {
 		LoadNextLevel();
+		gameScore = 0;
 	}
 
 	void LoadNextLevel() {
-		Debug.Log("Loading next level");
 		SceneManager.LoadScene("LevelScene");
 	}
 	
 	void OnLevelWasLoaded(int levelNum) {
-		Debug.Log("scene index " + levelNum.ToString() + " was loaded");
 		//levelNum here is the scene's build index
 		if (levelNum == 1) {
 			playerObj = GameObject.Find("Player");
 			lcObj = GameObject.Find("Level"); //LevelController obj
 			lc = lcObj.GetComponent<LevelController>();
+			lc.score = gameScore;
 			lc.InitLevel(++currentLevel);
 			stillPlaying = true;
 		}
@@ -53,12 +55,14 @@ public class GameController : MonoBehaviour {
 					//game won
 					stillPlaying = false;
 					Debug.Log("GC: Level Won!");
+					gameScore = lc.score;
 					LoadNextLevel();
 				}
 
 				if(lc.levelLost) {
 					stillPlaying = false;
 					Debug.Log("GC: Game Over");
+					gameScore = lc.score;
 					//show recap screen
 				}
 			}

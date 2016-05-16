@@ -62,6 +62,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void HandleAttack(int val) {
+		//send message to display on HUD
+		if(attackCommandAmt == 0)
+			SendMessageUpwards("ReceivePlayerInput", -1); //negative value clears text
+		SendMessageUpwards("ReceivePlayerInput", val);
+
 		attackCommand[attackCommandAmt] = val;
 		//move to location
 		switch(attackCommandAmt++) {
@@ -88,11 +93,7 @@ public class PlayerController : MonoBehaviour {
 		GameObject target9Block = GameObject.Find("9 Block " + val.ToString());
 		playerAudio.clip = phase1Audio[Random.Range(0, 2)];
 		playerAudio.Play();
-		if (target9Block)
-			gameObject.transform.position = target9Block.transform.position + new Vector3(0, 12, 0);
-			
-		else
-			Debug.Log("CANNOT FIND");
+		gameObject.transform.position = target9Block.transform.position + new Vector3(0, 12, 0);
 
 		curr9Block = target9Block;
 	}
