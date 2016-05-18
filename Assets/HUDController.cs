@@ -6,6 +6,7 @@ public class HUDController : MonoBehaviour {
 
 	public Text inputCoords;
 	public Text score;
+	public Text combo;
 	public Sprite[] endOfLevelSplashes;
 	public Image endOfLevelImage;
 	Canvas gameRecap;
@@ -23,6 +24,10 @@ public class HUDController : MonoBehaviour {
 	public void AppendToInputCoords(int val) {
 		if (val < 0) inputCoords.text = "";
 		else inputCoords.text += (val + 1).ToString();
+	}
+
+	public void UpdateCombo(float comboVal) {
+		combo.text = "x" + comboVal.ToString();
 	}
 
 	public void UpdateScore(int scoreVal) {

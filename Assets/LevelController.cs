@@ -37,6 +37,8 @@ public class LevelController : MonoBehaviour {
 		spawner.SpawnAll();
 		remTime = maxTime;
 		timeOfLastKill = maxTime;
+		currComboVal = 1;
+		HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal); //update combo value at start
 		HUDObj.GetComponent<HUDController>().UpdateScore(score); //update score at start
 		timerOver = false;
 	}
@@ -80,14 +82,28 @@ public class LevelController : MonoBehaviour {
 	//score is influenced by player timing
 	void UpdateScore(float timeOfKill) {
 		float diff = timeOfLastKill - timeOfKill;
-		int nextScore = (int) (100 / diff) + 100; //kill = 100 base score
-        /*if(diff <= comboThreshold) {
-            //combo multiplier!
-        }*/
+        if(diff <= comboThreshold) {
+			//combo multiplier!
+			currComboVal += comboStepVal;
+			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
+
+			//start combo reset timer
+		} else {
+			currComboVal = 1;
+			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
+		}
+
+		int nextScore = (int)(((100 / diff) + 100) * currComboVal); //kill = 100 base score
+
 		Debug.Log("diff: " + diff.ToString() + " -> score: " + nextScore.ToString());
 		score += nextScore;
 		HUDObj.GetComponent<HUDController>().UpdateScore(score);
 		timeOfLastKill = timeOfKill;
+	}
+
+	public IEnumerator ComboResetTimer() {
+		
+		yield return null;
 	}
 
 	//message to be received from player input
