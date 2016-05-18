@@ -7,6 +7,7 @@ public class HUDController : MonoBehaviour {
 	public Text inputCoords;
 	public Text score;
 	public Text combo;
+	public Image comboTimer;
 	public Sprite[] endOfLevelSplashes;
 	public Image endOfLevelImage;
 	Canvas gameRecap;
@@ -28,6 +29,21 @@ public class HUDController : MonoBehaviour {
 
 	public void UpdateCombo(float comboVal) {
 		combo.text = "x" + comboVal.ToString();
+	}
+
+	public void UpdateComboTimer(float duration, float timestamp) {
+		StartCoroutine(ComboTimerRoutine(duration, timestamp));
+	}
+
+	public IEnumerator ComboTimerRoutine(float duration, float timestamp) {
+		int loops = (int)(duration * 60);
+		for(int i = 0; i < loops; i++) {
+			comboTimer.fillAmount = (duration - (Time.time - timestamp)) / duration;
+			Debug.Log((duration - (Time.time - timestamp)) / duration);
+			yield return new WaitForSeconds(1 / loops);
+		}
+
+		comboTimer.fillAmount = 1;
 	}
 
 	public void UpdateScore(int scoreVal) {

@@ -82,18 +82,19 @@ public class LevelController : MonoBehaviour {
 	//score is influenced by player timing
 	void UpdateScore(float timeOfKill) {
 		float diff = timeOfLastKill - timeOfKill;
-        if(diff <= comboThreshold) {
-			//combo multiplier!
+		int nextScore = (int)(((100 / diff) + 100) * currComboVal); //kill = 100 base score
+
+		if (diff <= comboThreshold) {
+			//update combo multiplier for next kills
 			currComboVal += comboStepVal;
 			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
 
 			//start combo reset timer
+			HUDObj.GetComponent<HUDController>().UpdateComboTimer(comboResetTime, Time.time);
 		} else {
 			currComboVal = 1;
 			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
 		}
-
-		int nextScore = (int)(((100 / diff) + 100) * currComboVal); //kill = 100 base score
 
 		Debug.Log("diff: " + diff.ToString() + " -> score: " + nextScore.ToString());
 		score += nextScore;
