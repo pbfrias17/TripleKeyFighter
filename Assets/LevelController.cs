@@ -4,6 +4,7 @@ using System.Collections;
 
 public class LevelController : MonoBehaviour {
 
+	public int currLevelNum;
 	public int enemiesAmt, hazardsAmt;
 	public GameObject spawnerObj;
 	SpawnController spawner;
@@ -38,8 +39,12 @@ public class LevelController : MonoBehaviour {
 		remTime = maxTime;
 		timeOfLastKill = maxTime;
 		currComboVal = 1;
-		HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal); //update combo value at start
-		HUDObj.GetComponent<HUDController>().UpdateScore(score); //update score at start
+		currLevelNum = levelNum;
+
+		//init HUD values
+		HUDObj.GetComponent<HUDController>().DisplayLevelNumber(currLevelNum);
+		HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
+		HUDObj.GetComponent<HUDController>().UpdateScore(score);
 		timerOver = false;
 	}
 
@@ -90,13 +95,13 @@ public class LevelController : MonoBehaviour {
 			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
 
 			//start combo reset timer
+			HUDObj.GetComponent<HUDController>().ResetComboTimer();
 			HUDObj.GetComponent<HUDController>().UpdateComboTimer(comboResetTime, Time.time);
 		} else {
 			currComboVal = 1;
 			HUDObj.GetComponent<HUDController>().UpdateCombo(currComboVal);
 		}
 
-		Debug.Log("diff: " + diff.ToString() + " -> score: " + nextScore.ToString());
 		score += nextScore;
 		HUDObj.GetComponent<HUDController>().UpdateScore(score);
 		timeOfLastKill = timeOfKill;
