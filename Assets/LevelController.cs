@@ -20,6 +20,10 @@ public class LevelController : MonoBehaviour {
 
 	public GameObject HUDObj;
 	public int score;
+    public float comboThreshold;
+    public float comboResetTime;
+    public float currComboVal;
+    public float comboStepVal;
 
 	void Start () {
 		Camera.main.orthographicSize = 15;
@@ -40,12 +44,13 @@ public class LevelController : MonoBehaviour {
 	void InitDifficulty(int levelNum) {
 		enemiesAmt = Mathf.Max(levelNum, 3);
 		enemiesAmt = Mathf.Min(enemiesAmt, 15); // min/max of 3/15 enemies per level
-		hazardsAmt = levelNum * 3;
+		hazardsAmt = levelNum * 2;
 		if((hazardsAmt + enemiesAmt) > 27) {
 			hazardsAmt -= (hazardsAmt + enemiesAmt - 27);
 		}
 
-		maxTime = Mathf.Max((float) (25 - (levelNum * 1.5)), 10);
+        //game difficulty/time hits a plateau - which is fine
+		maxTime = Mathf.Max((float) (25 - (levelNum * 1.2)), 15);
 
 	}
 
@@ -76,6 +81,9 @@ public class LevelController : MonoBehaviour {
 	void UpdateScore(float timeOfKill) {
 		float diff = timeOfLastKill - timeOfKill;
 		int nextScore = (int) (100 / diff) + 100; //kill = 100 base score
+        /*if(diff <= comboThreshold) {
+            //combo multiplier!
+        }*/
 		Debug.Log("diff: " + diff.ToString() + " -> score: " + nextScore.ToString());
 		score += nextScore;
 		HUDObj.GetComponent<HUDController>().UpdateScore(score);
