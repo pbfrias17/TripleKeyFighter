@@ -127,7 +127,11 @@ public class PlayerController : MonoBehaviour {
 			playerAudio.clip = hurtAudio[Random.Range(0, hurtAudio.Length)];
 			playerAudio.Play();
 			StartCoroutine(ParalyzeTime(paralyzeDuration));
-        } else {
+        } else if(block.itemObj != null) {
+			Debug.Log("picking up plusTime");
+			PlusTimeItem psi = block.itemObj.GetComponent<PlusTimeItem>();
+			psi.PickUp();
+		} else {
 			LandOnEmpty();
         }
 	

@@ -41,4 +41,12 @@ public class Enemy : MonoBehaviour {
 		Die();
 
 	}
+
+	public void OnDestroy() {
+		//since amtAlive is static, must manually decrement it when living enemies are destroyed (starting a new game)
+		if (alive) {
+			amtAlive--;
+			Debug.Log("living enemy destroyed");
+		}
+	}
 }

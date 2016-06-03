@@ -54,6 +54,7 @@
      <Compile Include="Assets\Hazard.cs" />
      <Compile Include="Assets\LevelController.cs" />
      <Compile Include="Assets\PlayerController.cs" />
+     <Compile Include="Assets\PlusTimeItem.cs" />
      <Compile Include="Assets\SpawnController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files (D)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

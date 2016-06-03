@@ -9,26 +9,31 @@ public class GameController : MonoBehaviour {
 	public GameObject playerObj;
 	PlayerController pc;
 
-	public int currentLevel = 0;
+	public int currentLevel;
 	public bool stillPlaying;
 	public bool levelLoaded;
 
 	public int gameScore;
 
+	AudioSource bgMusic;
+	bool musicPlaying;
 
 	void Awake() {
-		levelLoaded = false;
 		DontDestroyOnLoad(transform.gameObject);
+		levelLoaded = false;
 	}
 
 	void Start() {
-		StartGame();
+		bgMusic = GetComponent<AudioSource>();
 	}
 
-
-	void StartGame() {
+	//invoked by "Play" button
+	public void StartGame() {
 		LoadNextLevel();
 		gameScore = 0;
+		currentLevel = 0;
+		musicPlaying = false;
+		stillPlaying = true;
 	}
 
 	void LoadNextLevel() {
@@ -36,6 +41,8 @@ public class GameController : MonoBehaviour {
 	}
 	
 	void OnLevelWasLoaded(int levelNum) {
+		PlayMusic();
+
 		//levelNum here is the scene's build index
 		if (levelNum == 1) {
 			playerObj = GameObject.Find("Player");
@@ -47,6 +54,14 @@ public class GameController : MonoBehaviour {
 		}
 		levelLoaded = true;
 	}
+
+	void PlayMusic() {
+		if (!musicPlaying) {
+			musicPlaying = true;
+			bgMusic.Play();
+		}
+	}
+
 
 	void Update () {
 		if(levelLoaded) {
@@ -62,13 +77,16 @@ public class GameController : MonoBehaviour {
 				if(lc.levelLost) {
 					stillPlaying = false;
 					Debug.Log("GC: Game Over");
-					gameScore = lc.score;
-					//show recap screen
+					gameScore = lc.score;			
 				}
 			}
 
 			if(!stillPlaying) {
 				playerObj.GetComponent<PlayerController>().canTakeInput = false;
+				//show recap screen
+				if (lc.newGame) {
+					StartGame();
+				}
 			}
 		}
 	}

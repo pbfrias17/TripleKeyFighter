@@ -15,9 +15,11 @@ public class LevelController : MonoBehaviour {
 	float timeOfLastKill;
 
 	public bool timerOver = true;
+	public bool plusTimeSpawn = false;
 	public bool stillPlaying = true;
 	public bool levelWon = false;
 	public bool levelLost = false;
+	public bool newGame = false;
 
 	public GameObject HUDObj;
 	public int score;
@@ -27,7 +29,7 @@ public class LevelController : MonoBehaviour {
     public float comboStepVal;
 
 	void Start () {
-		Camera.main.orthographicSize = 15;
+		Camera.main.orthographicSize = 20;
 	}
 
 	public void InitLevel(int levelNum) {
@@ -36,6 +38,10 @@ public class LevelController : MonoBehaviour {
 		spawner = spawnerObj.GetComponent<SpawnController>();
 		spawner.Build(enemiesAmt, hazardsAmt);
 		spawner.SpawnAll();
+		if(plusTimeSpawn) {
+			//spawn a PlusTimeItem as well
+			spawner.SpawnItem(1);
+		}
 		remTime = maxTime;
 		timeOfLastKill = maxTime;
 		currComboVal = 1;
@@ -48,15 +54,29 @@ public class LevelController : MonoBehaviour {
 		timerOver = false;
 	}
 
+
+	//Difficulty only depends on curren level number
 	void InitDifficulty(int levelNum) {
 		enemiesAmt = Mathf.Max(levelNum, 3);
 		enemiesAmt = Mathf.Min(enemiesAmt, 15); // min/max of 3/15 enemies per level
 		hazardsAmt = levelNum * 2;
-		if((hazardsAmt + enemiesAmt) > 27) {
+
+		//If too many spawnables, decrease the number of hazards
+		if ((hazardsAmt + enemiesAmt) > 27) {
 			hazardsAmt -= (hazardsAmt + enemiesAmt - 27);
 		}
 
-        //game difficulty/time hits a plateau - which is fine
+
+		//PlusTime items may start spawning at level 6
+		if (levelNum >= 6) {
+			int prob = Random.Range(0, 2);
+			if (prob == 0) {
+				hazardsAmt--; //will always have room for an item
+				plusTimeSpawn = true;
+			}
+		}
+
+		//game difficulty/time hits a plateau - which is fine
 		maxTime = Mathf.Max((float) (25 - (levelNum * 1.2)), 15);
 
 	}
@@ -75,6 +95,7 @@ public class LevelController : MonoBehaviour {
 
 	//message to be received from enemy deaths
 	public void ReceiveDeathMessage(int enemiesLeft) {
+		Debug.Log(enemiesLeft);
 		//update score after each kill
 		UpdateScore(remTime);
 
@@ -125,6 +146,8 @@ public class LevelController : MonoBehaviour {
 		StartCoroutine(InterLevelWait(3));
 	}
 
+
+	//wait some time between each successive level
 	public IEnumerator InterLevelWait(float waitDur) {
 		yield return new WaitForSeconds(waitDur);
 		levelWon = true;
@@ -136,5 +159,10 @@ public class LevelController : MonoBehaviour {
 		levelLost = true;
 		timerText.text = "0.00";
 		HUDObj.GetComponent<HUDController>().ShowEndOfLevelSplash(false, 100);
+	}
+
+
+	public void StartNewGame() {
+		newGame = true;
 	}
 }

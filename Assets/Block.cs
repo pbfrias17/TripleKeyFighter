@@ -8,6 +8,7 @@ public class Block : MonoBehaviour {
 
     public GameObject enemyObj;
     public GameObject hazardObj;
+	public GameObject itemObj;
 	public bool isEmpty;
     public bool playerLanded;
     //public Vector3 spawnOffset;

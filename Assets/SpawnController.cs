@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//Class that handles spawning of spawnables at random spots
 public class SpawnController : MonoBehaviour {
 
     public int enemiesToSpawn;
 	public int hazardsToSpawn;
     public GameObject[] spawnableEnemies;
     public GameObject[] spawnableHazards;
-    public NineBlock[] nineBlocks;
-	public enum spawnables { Enemies, Hazards }
+	public GameObject[] spawnableItems;
+	public NineBlock[] nineBlocks;
+	public enum spawnables { Enemies, Hazards, Items }
 
-
+	//Configure what/amount to spawn
 	public void Build(int enemies, int hazards) {
 		enemiesToSpawn = enemies;
 		hazardsToSpawn = hazards;
@@ -18,10 +20,15 @@ public class SpawnController : MonoBehaviour {
 
 
 	public void SpawnAll() {
+		//enemy spawn is priority
 		SpawnSpawnables((int)spawnables.Enemies, enemiesToSpawn);
+		//hazards and items spawn are dependent
 		SpawnSpawnables((int)spawnables.Hazards, hazardsToSpawn);
 	}
 
+	public void SpawnItem(int amountToSpawn) {
+		SpawnSpawnables((int)spawnables.Items, amountToSpawn);
+	}
 
 	void SpawnSpawnables(int type, int amt) {
 		int[] randomCoords = new int[3];
@@ -34,6 +41,7 @@ public class SpawnController : MonoBehaviour {
 				block.isEmpty = false;
 				amtSpawned++;
 				switch (type) {
+					//ew, fix this eventually
 					case (int) spawnables.Enemies:
 						GameObject enemyObj = Instantiate(spawnableEnemies[0], block.transform.position, Quaternion.identity) as GameObject;
 						block.enemyObj = enemyObj;
@@ -44,6 +52,12 @@ public class SpawnController : MonoBehaviour {
 						block.hazardObj = hazardObj;
 						hazardObj.transform.parent = gameObject.transform;
 						break;
+					case (int) spawnables.Items:
+						GameObject itemObj = Instantiate(spawnableItems[0], block.transform.position, Quaternion.identity) as GameObject;
+						block.itemObj = itemObj;
+						itemObj.transform.parent = gameObject.transform;
+						break;
+
 				}
 			}
 		}
